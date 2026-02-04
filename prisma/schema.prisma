@@ -1,0 +1,176 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Initial placeholder model to ensure Prisma works
+model Organization {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Settings (stored as JSON for flexibility)
+  settings  Json?    @default("{}")
+
+  // Relations
+  users     User[]
+  clients   Client[]
+  products  Product[]
+  invoices  Invoice[]
+  payments  Payment[]
+
+  @@map("organizations")
+}
+
+// ... (User and Client models remain unchanged)
+
+model Product {
+  id             String       @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  name           String
+  description    String?
+  price          Decimal      @default(0)
+  currency       String       @default("USD")
+  
+  // invoices       InvoiceItem[] // Will be added later -> products have InvoiceItems relation
+  invoiceItems   InvoiceItem[]
+
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@map("products")
+}
+
+model Invoice {
+  id             String       @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  clientId       String
+  client         Client       @relation(fields: [clientId], references: [id])
+  
+  number         String
+  date           DateTime
+  dueDate        DateTime
+  status         InvoiceStatus @default(DRAFT)
+  
+  items          InvoiceItem[]
+  
+  subtotal       Decimal      @default(0)
+  taxRate        Decimal      @default(0)
+  taxAmount      Decimal      @default(0)
+  total          Decimal      @default(0)
+  currency       String       @default("USD")
+  
+  notes          String?
+
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  paidAt         DateTime?
+  
+  payments       Payment[]
+
+  @@unique([organizationId, number])
+  @@map("invoices")
+}
+
+model Payment {
+  id             String       @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  invoiceId      String
+  invoice        Invoice      @relation(fields: [invoiceId], references: [id])
+  
+  amount         Decimal
+  currency       String
+  provider       String       @default("stripe") 
+  externalId     String?      
+  status         PaymentStatus @default(PENDING)
+  
+  createdAt      DateTime     @default(now())
+  
+  @@map("payments")
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+model InvoiceItem {
+  id             String       @id @default(uuid())
+  invoiceId      String
+  invoice        Invoice      @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  
+  productId      String?
+  product        Product?     @relation(fields: [productId], references: [id])
+  
+  description    String
+  quantity       Decimal      @default(1)
+  unitPrice      Decimal      @default(0)
+  total          Decimal      @default(0)
+
+  @@map("invoice_items")
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+// Update Client to have invoices relation
+// Note: You need to manually ensure Client model has `invoices Invoice[]` line.
+
+
+model User {
+  id             String       @id @default(uuid())
+  email          String       @unique
+  password       String
+  name           String
+  role           UserRole     @default(OWNER)
+  
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@map("users")
+}
+
+model Client {
+  id             String       @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  name           String
+  email          String?
+  vatNumber      String?
+  address        String?
+  
+  invoices       Invoice[]
+
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@map("clients")
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  MEMBER
+}

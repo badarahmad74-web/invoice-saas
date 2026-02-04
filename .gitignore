@@ -1,0 +1,11 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+# CRITICAL: Never commit .env files to version control to avoid leaking secrets
+.env
+.env.*
+
+# Build outputs
+dist/
+build/
