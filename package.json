@@ -6,8 +6,9 @@
   "description": "Invoice SaaS Frontend - React + Vite + Hostinger",
   "scripts": {
     "dev": "node node_modules/vite/bin/vite.js",
-    "build": "node node_modules/vite/bin/vite.js build",
-    "preview": "node node_modules/vite/bin/vite.js preview"
+    "build": "node node_modules/vite/bin/vite.js build && npm install --prefix backend && npm run build --prefix backend",
+    "preview": "node node_modules/vite/bin/vite.js preview",
+    "start": "NODE_ENV=production node backend/dist/server.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
