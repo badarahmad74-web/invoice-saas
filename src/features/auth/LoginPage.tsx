@@ -26,15 +26,17 @@ export const LoginPage: React.FC = () => {
             login(response.data.token, response.data.user);
             navigate('/');
         } catch (error: any) {
+            console.error('Login error:', error);
             if (error.response?.data?.error) {
-                // Handle generic string error or array of issues
                 if (typeof error.response.data.error === 'string') {
                     setError('root', { message: error.response.data.error });
                 } else {
-                    setError('root', { message: 'Login failed' });
+                    setError('root', { message: 'Login failed: ' + JSON.stringify(error.response.data.error) });
                 }
+            } else if (error.message) {
+                setError('root', { message: `Error: ${error.message}` });
             } else {
-                setError('root', { message: 'Something went wrong' });
+                setError('root', { message: 'Something went wrong. Please check your connection.' });
             }
         }
     };
