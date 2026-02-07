@@ -4,12 +4,12 @@
   "type": "module",
   "description": "Invoice SaaS Backend - Express + Prisma",
   "scripts": {
-    "dev": "tsx watch src/app.ts",
-    "build": "tsc",
+    "dev": "node --loader tsx src/app.ts",
+    "build": "node node_modules/typescript/bin/tsc",
     "start": "node dist/app.js",
-    "migrate": "prisma migrate dev",
-    "migrate:prod": "prisma migrate deploy",
-    "studio": "prisma studio"
+    "migrate": "node node_modules/prisma/bin/index.js migrate dev",
+    "migrate:prod": "node node_modules/prisma/bin/index.js migrate deploy",
+    "studio": "node node_modules/prisma/bin/index.js studio"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
