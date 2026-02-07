@@ -6,10 +6,8 @@
   "description": "Invoice SaaS Frontend - React + Vite + Hostinger",
   "scripts": {
     "dev": "vite",
-    "build": "npx tsc -b && npx vite build",
-    "lint": "eslint .",
-    "preview": "vite preview",
-    "start": "vite preview"
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
