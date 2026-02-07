@@ -6,8 +6,9 @@
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
 
-  # Exclude /api calls from SPA rewrite
+  # Exclude /api and /health calls from SPA rewrite
   RewriteCond %{REQUEST_URI} !^/api/
+  RewriteCond %{REQUEST_URI} !^/health$
 
   # Route all other requests to index.html for client-side routing
   RewriteRule ^(?!dist/).*$ dist/index.html [QSA,L]
