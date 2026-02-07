@@ -31,6 +31,8 @@
     "@types/helmet": "^0.0.48",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.10.1",
+    "@types/nodemailer": "^6.4.17",
+    "@types/handlebars": "^4.1.0",
     "prisma": "^5.22.0",
     "tsx": "^4.19.2",
     "typescript": "~5.9.3"
